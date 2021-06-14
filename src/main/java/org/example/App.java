@@ -50,21 +50,20 @@ public class App {
 
         System.out.println("Задание 2");
         for(Studentyi st: stds){
-            if(st.getStatus().equals("academ"))
-            {
-                Integer number = Integer.valueOf(st.getGruppyi().getNazvanie().substring(st.getGruppyi().getNazvanie().lastIndexOf("-") + 1));
-                String beforeFirstDot = st.getGruppyi().getNazvanie().split("\\-")[0];
-                number = number +1;
+            if(st.getStatus().equals("academ")) {
+                String before = st.getGruppyi().getNazvanie().split("\\-")[0];
+                Integer course = Integer.valueOf(st.getGruppyi().getCourse());
+                course = course + 1;
                 Gruppyi rt = new Gruppyi();
-                String nasvanie = beforeFirstDot + "-" + number;
-                for(Gruppyi gt : grup)
-                    if (gt.getNazvanie().equals(nasvanie)) {
+                for (Gruppyi gt : grup) {
+                    String ry = gt.getNazvanie().split("\\-")[0];
+                    if (ry.equals(before) && gt.getCourse().equals(course)) {
                         rt = gt;
                     }
+                }
                 st.setStatus("enrolled");
                 st.setGruppyi(rt);
             }
-
         }
         session.getTransaction().commit();
         HibernateUtil.shutdown();
