@@ -20,9 +20,10 @@ public class App {
         // 1.Вывести группы определённой специальности (A, It).
         // 2.Вывести таблицу: Группы, количество студентов
         // Добавить таблицу «Оценки», связанную с таблицей «Студенты» отношением многие-к-одному.
+        //1.Перевести студентов со статусом «академический отпуск» в группу той же специальности, но обучающейся на младшем курсе.
         List <Studentyi> stds = query.list();
         List <Gruppyi> grup = query2.list();
-        System.out.println("Задание 1");
+        System.out.println("Выборка 1");
         for(Studentyi st: stds){
             System.out.println(st.getFamiliya() + " " + st.getImya() + " " + st.getOtchestvo() +
                     " учится в группе " + st.getGruppyi().getNazvanie());
@@ -32,7 +33,7 @@ public class App {
             System.out.println("Группа " + g.getNazvanie() + " имеет " + g.getStudentyis().size() + " студента(ов).");
         }
 
-        System.out.println("\nЗадание 2 ");
+        System.out.println("\nВыборка 2 ");
         Query query11 = session.createQuery("FROM Gruppyi WHERE nazvanie like 'A-%' ");
         System.out.println("К специальности 'Автоматитизация' принадлежат группы:  ");
         List<Gruppyi> gr = query11.list();
@@ -47,6 +48,24 @@ public class App {
             System.out.println("  " + gru.getNazvanie());
         }
 
+        System.out.println("Задание 2");
+        for(Studentyi st: stds){
+            if(st.getStatus().equals("academ"))
+            {
+                Integer number = Integer.valueOf(st.getGruppyi().getNazvanie().substring(st.getGruppyi().getNazvanie().lastIndexOf("-") + 1));
+                String beforeFirstDot = st.getGruppyi().getNazvanie().split("\\-")[0];
+                number = number +1;
+                Gruppyi rt = new Gruppyi();
+                String nasvanie = beforeFirstDot + "-" + number;
+                for(Gruppyi gt : grup)
+                    if (gt.getNazvanie().equals(nasvanie)) {
+                        rt = gt;
+                    }
+                st.setStatus("enrolled");
+                st.setGruppyi(rt);
+            }
+
+        }
         session.getTransaction().commit();
         HibernateUtil.shutdown();
     }
