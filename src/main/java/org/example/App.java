@@ -6,34 +6,33 @@ import org.example.util.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class App {
     public static void main(String[] args) {
         Session session = HibernateUtil.getSessionFactory().openSession();
-        // Вывести таблицу ФИО студента, название группы.
         session.beginTransaction();
-        /*String hql = "FROM Studentyi ";
-        Query query = session.createQuery(hql);
+        Query query = session.createQuery("From Studentyi");
+        Query query2 = session.createQuery("From Gruppyi");
+        // 1.Вывести группы определённой специальности (A, It).
+        // 2.Вывести таблицу: Группы, количество студентов
+        // Добавить таблицу «Оценки», связанную с таблицей «Студенты» отношением многие-к-одному.
+        List <Studentyi> stds = query.list();
+        List <Gruppyi> grup = query2.list();
+        System.out.println("Задание 1");
+        for(Studentyi st: stds){
+            System.out.println(st.getFamiliya() + " " + st.getImya() + " " + st.getOtchestvo() +
+                    " учится в группе " + st.getGruppyi().getNazvanie());
+        }
+        System.out.println("-------------------------------------------");
+        for(Gruppyi g: grup){
+            System.out.println("Группа " + g.getNazvanie() + " имеет " + g.getStudentyis().size() + " студента(ов).");
+        }
 
-        List<Studentyi> studentyi = query.list();
-        studentyi.size();
-        try {
-            for (int i = 0; i <= studentyi.size(); i++) {
-                System.out.println("\t" + studentyi.get(i).getFamiliya() + "\t"
-                        + studentyi.get(i).getImya() + "\t"
-                        + studentyi.get(i).getOtchestvo() + "\t"
-                        + studentyi.get(i).getGruppyi().getNazvanie());
-            }
-        } catch (Exception e) {
-           /* String hql1 = "FROM Gruppyi WHERE nazvanie like 'A-%' ";
-            Query query11 = session.createQuery(hql1);
-            List<Gruppyi> gr = query11.list();
-
-            for(Gruppyi gru: gr){
-                System.out.println("Группа " + gru.getNazvanie());
-
-        }*/
+        System.out.println("\nЗадание 2 ");
         Query query11 = session.createQuery("FROM Gruppyi WHERE nazvanie like 'A-%' ");
         System.out.println("К специальности 'Автоматитизация' принадлежат группы:  ");
         List<Gruppyi> gr = query11.list();
@@ -47,8 +46,6 @@ public class App {
         for(Gruppyi gru: gr1){
             System.out.println("  " + gru.getNazvanie());
         }
-
-
 
         session.getTransaction().commit();
         HibernateUtil.shutdown();
